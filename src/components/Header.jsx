@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   IconMenu2,
   IconX,
   IconSearch,
-  IconInnerShadowTopRight,
   IconLayoutGrid,
 } from "@tabler/icons-react";
 
 import useAuth from "../utils/hooks/useAuth";
+import { useImageUrl } from "../utils/hooks/useImgUrl";
 import noAvatar from "../assets/images/no-avatar.png";
 
 const menu = [
@@ -20,7 +20,16 @@ const menu = [
 
 export const Header = () => {
   const location = useLocation();
-  const { fetchDeleteSession } = useAuth();
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const { fetchDeleteSession, details } = useAuth();
+
+  useEffect(() => {
+    if (details?.avatar?.tmdb?.avatar_path) {
+      setAvatarUrl(useImageUrl(details.avatar.tmdb.avatar_path));
+    }
+  }, [details]);
+
+  console.log("avatar!!!!!!", avatarUrl);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -64,16 +73,24 @@ export const Header = () => {
           ))}
         </ul>
       </div>
-      <div className="hidden md:flex md:items-center md:gap-5">
+      <div className="hidden md:flex md:items-center md:gap-5 group">
         <IconSearch />
-        <IconInnerShadowTopRight />
         <IconLayoutGrid />
-        <div className="w-8 h-8 grup">
-          <img src={noAvatar} alt="noavatar" />
-          <div>
+        <div className="w-8 h-8  relative hover:scale-110 duration-300">
+          {avatarUrl !== "" ? (
+            <img className="rounded-full" src={avatarUrl} alt="avatar" />
+          ) : (
+            <img src={noAvatar} alt="noavatar" />
+          )}
+          <div className="absolute top-8 right-2 w-36 h-32 bg-secondary text-center group-hover:flex flex-col gap-y-5 items-center justify-between px-3 py-5 rounded-2xl hidden transition-all duration-300">
+            {!!Object.keys(details).length ? (
+              <h3>{details.username}</h3>
+            ) : (
+              <h3>Guest session</h3>
+            )}
             <button
               type="button"
-              className="bg-green-700 hidden md:block"
+              className="bg-gradient-to-r from-pink-500 to-red-500 p-2 rounded-xl hover:scale-110 duration-300"
               onClick={handleLogOut}
             >
               cerrar sesion

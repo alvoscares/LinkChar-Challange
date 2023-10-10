@@ -149,6 +149,8 @@ const AuthProvider = ({ children }) => {
         isLoggedIn,
         fetchDeleteSession,
         fetchCreateGuestSession,
+        details,
+        alert
       }}
     >
       {children}

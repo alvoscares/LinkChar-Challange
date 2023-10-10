@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from "react";
+import { IconCaretLeftFilled } from "@tabler/icons-react";
+
 import useMovies from "../utils/hooks/useMovies";
+import useAuth from "../utils/hooks/useAuth";
 import { Card } from "./Card";
 
-import { gsap } from "gsap";
-import { IconCaretLeftFilled } from "@tabler/icons-react";
 
 export const Sidebar = () => {
   const { upcoming, loadingSidebar } = useMovies();
-  const isLogin = true;
+  const { details } = useAuth();
+  
+  const isLogin = !!Object.keys(details).length;
 
   const [isOpen, setIsOpen] = useState(true);
 
@@ -28,7 +31,7 @@ export const Sidebar = () => {
       />
       <div
         className={`${
-          isLogin ? "h-2/3" : "h-full"
+          isLogin ? "h-2/3" : "h-[95%]"
         }   flex flex-col gap-y-2 px-11 pt-7`}
       >
         <div
