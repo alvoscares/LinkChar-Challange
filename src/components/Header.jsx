@@ -68,18 +68,19 @@ export const Header = () => {
         <IconSearch />
         <IconInnerShadowTopRight />
         <IconLayoutGrid />
-        <div className="w-8 h-8">
+        <div className="w-8 h-8 grup">
           <img src={noAvatar} alt="noavatar" />
+          <div>
+            <button
+              type="button"
+              className="bg-green-700 hidden md:block"
+              onClick={handleLogOut}
+            >
+              cerrar sesion
+            </button>
+          </div>
         </div>
       </div>
-
-      <button
-        type="button"
-        className="bg-green-700 hidden md:block"
-        onClick={handleLogOut}
-      >
-        cerrar sesion
-      </button>
     </header>
   );
 };
