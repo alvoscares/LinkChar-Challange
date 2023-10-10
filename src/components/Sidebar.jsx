@@ -5,11 +5,10 @@ import useMovies from "../utils/hooks/useMovies";
 import useAuth from "../utils/hooks/useAuth";
 import { Card } from "./Card";
 
-
 export const Sidebar = () => {
   const { upcoming, loadingSidebar } = useMovies();
   const { details } = useAuth();
-  
+
   const isLogin = !!Object.keys(details).length;
 
   const [isOpen, setIsOpen] = useState(true);
@@ -54,7 +53,12 @@ export const Sidebar = () => {
             <div className="flex flex-col gap-5 ">
               {loadingSidebar
                 ? Array.from({ length: 4 }, (_, index) => (
-                    <Card key={index} loading={true} type={"normal"} height={"36"}/>
+                    <Card
+                      key={index}
+                      loading={true}
+                      type={"normal"}
+                      height={"36"}
+                    />
                   ))
                 : upcoming?.map((movie) => (
                     <Card key={movie.id} movie={movie} type={"normal"} />
@@ -65,7 +69,9 @@ export const Sidebar = () => {
       </div>
       {isLogin && (
         <div
-          className={`flex-1 bg-secondary w-full px-11 pb-7 ${!isOpen && "origin-left scale-0"}`}
+          className={`flex-1 bg-secondary w-full px-11 pb-7 ${
+            !isOpen && "origin-left scale-0"
+          }`}
         >
           <div className={``}>
             <h1 className="text-white text-lg font-semibold pt-5">

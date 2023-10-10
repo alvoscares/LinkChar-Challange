@@ -5,7 +5,7 @@ import useMovies from "../utils/hooks/useMovies";
 
 export const Movie = () => {
   const { id } = useParams();
-  const { fetchDetails, details, loadingMovie } = useMovies();
+  const { fetchDetails, detailsMovie, loadingMovie } = useMovies();
 
   useEffect(() => {
     fetchDetails(id);
@@ -14,7 +14,7 @@ export const Movie = () => {
   return (
     <div className="w-full h-full">
       <h1 className="text-white text-lg mb-5 font-semibold cursor-pointer">
-        {details.title}
+        {detailsMovie.title}
       </h1>
     </div>
   );

@@ -1,19 +1,25 @@
 import { createContext } from "react";
 import { useEffect, useState } from "react";
+
+import useAuth from "../utils/hooks/useAuth";
 import MovieListApi from "../api/services/MovieLists";
 import MovieApi from "../api/services/Movie";
+import AccountApi from "../api/services/Account";
 
 const MoviesContext = createContext();
 
 const MoviesProvider = ({ children }) => {
+  const { details, sessionId } = useAuth();
+
   // Movie
   const [loadingMovie, setLoadingMovie] = useState(false);
-  const [details, setDetails] = useState({});
+  const [detailsMovie, setDetailsMovie] = useState({});
   // Movies
   const [loadingMovies, setLoadingMovies] = useState(false);
   const [nowPlaying, setNowPlaying] = useState({});
   const [popular, setPopular] = useState([]);
   const [topRated, setTopRated] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   // SideBar
   const [loadingSidebar, setLoadingSidebar] = useState(false);
   const [upcoming, setUpcoming] = useState([]);
@@ -29,7 +35,7 @@ const MoviesProvider = ({ children }) => {
   }, []);
 
   const fetchNowPlaying = async () => {
-    setNowPlaying({})
+    setNowPlaying({});
     setLoadingMovies(true);
     const data = await MovieListApi.getNowPlaying();
     setNowPlaying(data);
@@ -50,15 +56,20 @@ const MoviesProvider = ({ children }) => {
     setLoadingMovies(false);
   };
 
+  const fetchFavoriteMovies = async () => {
+    setLoadingMovie(true);
+    const data = await AccountApi.getFavoriteMovies(details.id, sessionId)
+    setFavorites(data)
+    setLoadingMovie(false)
+  }
+
   const fetchDetails = async (id) => {
-    setDetails({})
+    setDetailsMovie({});
     setLoadingMovie(true);
     const data = await MovieApi.getDetails(id);
-    setDetails(data);
+    setDetailsMovie(data);
     setLoadingMovie(false);
   };
-
-
 
   return (
     <MoviesContext.Provider
@@ -69,12 +80,14 @@ const MoviesProvider = ({ children }) => {
         fetchNowPlaying,
         loadingMovies,
         fetchDetails,
-        details,
+        detailsMovie,
         loadingMovie,
         fetchPopular,
         popular,
         topRated,
-        fetchTopRated
+        fetchTopRated,
+        fetchFavoriteMovies,
+        favorites
       }}
     >
       {children}

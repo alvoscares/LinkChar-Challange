@@ -29,8 +29,6 @@ export const Header = () => {
     }
   }, [details]);
 
-  console.log("avatar!!!!!!", avatarUrl);
-
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogOut = () => {

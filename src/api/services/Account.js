@@ -12,5 +12,17 @@ const getDetails = async (session_id) => {
     }
 }
 
-export default { getDetails }
+const getFavoriteMovies = async (id, session_id) => {
+    try {
+        const { data } = await TmdbClient(`https://api.themoviedb.org/3/account/${id}/favorite/movies?session_id=${session_id}`)
+        return data.results
+    } catch (error) {
+        return {
+            susses: false,
+            msg: error.response.data.status_message
+        }
+    }
+}
+
+export default { getDetails, getFavoriteMovies }
 

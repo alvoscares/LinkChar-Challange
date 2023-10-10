@@ -150,6 +150,7 @@ const AuthProvider = ({ children }) => {
         fetchDeleteSession,
         fetchCreateGuestSession,
         details,
+        sessionId,
         alert
       }}
     >
