@@ -7,26 +7,17 @@ import { SectionRowMovie } from "../components/SectionRowMovie";
 
 export const Movies = () => {
   const {
-    fetchNowPlaying,
-    nowPlaying,
     loadingMovies,
-    fetchPopular,
+    fetchMoviesPage,
+    nowPlaying,
     popular,
-    topRated,
-    fetchTopRated,
-    fetchFavoriteMovies,
-    favorites
+    topRated
   } = useMovies();
 
   const { details } = useAuth();
 
   useEffect(() => {
-    fetchNowPlaying();
-    fetchPopular();
-    fetchTopRated();
-    if(!!Object.keys(details).length){
-      fetchFavoriteMovies()
-    }
+    fetchMoviesPage();
   }, []);
 
   return (
@@ -35,7 +26,7 @@ export const Movies = () => {
         {loadingMovies ? (
           <Card loading={true} height={"32"} type={"hero"} />
         ) : (
-          <Card movie={nowPlaying} height={"32"} hero={true} type={"hero"} />
+          <Card movie={nowPlaying[1]} height={"32"} hero={true} type={"hero"} />
         )}
       </div>
 
@@ -43,10 +34,10 @@ export const Movies = () => {
       {/* <SectionRowMovie loading={loadingMovies} movies={favorites} title="Continue Watching" path="popular"/> */}
 
       {/* Popular Section */}
-      <SectionRowMovie loading={loadingMovies} movies={popular} title="Popular Movies 2023" path="popular"/>
+      <SectionRowMovie movies={popular} title="Popular Movies 2023" path="popular"/>
 
       {/* Top Rated Section */}
-      <SectionRowMovie loading={loadingMovies} movies={topRated} title="Top Rated" path="toprated"/>
+      <SectionRowMovie movies={topRated} title="Top Rated" path="toprated"/>
     </div>
   );
 };

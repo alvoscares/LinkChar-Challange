@@ -5,6 +5,7 @@ import useAuth from "../utils/hooks/useAuth";
 import MovieListApi from "../api/services/MovieLists";
 import MovieApi from "../api/services/Movie";
 import AccountApi from "../api/services/Account";
+import GenresApi from "../api/services/Genres";
 
 const MoviesContext = createContext();
 
@@ -16,78 +17,121 @@ const MoviesProvider = ({ children }) => {
   const [detailsMovie, setDetailsMovie] = useState({});
   // Movies
   const [loadingMovies, setLoadingMovies] = useState(false);
-  const [nowPlaying, setNowPlaying] = useState({});
+  const [loadingSideBar, setLoadingSideBar] = useState(false);
+  const [upComing, setUpComing] = useState([]);
+  const [nowPlaying, setNowPlaying] = useState([]);
   const [popular, setPopular] = useState([]);
   const [topRated, setTopRated] = useState([]);
   const [favorites, setFavorites] = useState([]);
-  // SideBar
-  const [loadingSidebar, setLoadingSidebar] = useState(false);
-  const [upcoming, setUpcoming] = useState([]);
+  // Genres
+  const [genres, setGenres] = useState([]);
 
-  useEffect(() => {
-    const fetchUpcoming = async () => {
-      setLoadingSidebar(true);
-      const data = await MovieListApi.getUpcoming();
-      setUpcoming(data.results);
-      setLoadingSidebar(false);
-    };
-    fetchUpcoming();
-  }, []);
+  const fetchUpcoming = async (page) => {
+    setLoadingSideBar(true);
+    try {
+      const { data } = await MovieListApi.getUpcoming(page);
+      setUpComing(data.results);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingSideBar(false);
+    }
+  };
 
   const fetchNowPlaying = async () => {
-    setNowPlaying({});
-    setLoadingMovies(true);
-    const data = await MovieListApi.getNowPlaying();
-    setNowPlaying(data);
-    setLoadingMovies(false);
+    try {
+      const { data } = await MovieListApi.getNowPlaying();
+      setNowPlaying(data.results);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchPopular = async () => {
-    setLoadingMovies(true);
-    const data = await MovieListApi.getPopular();
-    setPopular(data);
-    setLoadingMovies(false);
+    try {
+      const { data } = await MovieListApi.getPopular();
+      setPopular(data.results);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchTopRated = async () => {
-    setLoadingMovies(true);
-    const data = await MovieListApi.getTopRated();
-    setTopRated(data);
-    setLoadingMovies(false);
+    try {
+      const { data } = await MovieListApi.getTopRated();
+      setTopRated(data.results);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchFavoriteMovies = async () => {
-    setLoadingMovie(true);
-    const data = await AccountApi.getFavoriteMovies(details.id, sessionId)
-    setFavorites(data)
-    setLoadingMovie(false)
-  }
+    try {
+      const { data } = await AccountApi.getFavoriteMovies(
+        details.id,
+        sessionId
+      );
+      setFavorites(data.results);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const fetchDetails = async (id) => {
     setDetailsMovie({});
-    setLoadingMovie(true);
-    const data = await MovieApi.getDetails(id);
-    setDetailsMovie(data);
-    setLoadingMovie(false);
+    try {
+      const { data } = await MovieApi.getDetails(id);
+      setDetailsMovie(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  const fetchMoviesPage = async () => {
+    setLoadingMovies(true);
+    const page = Math.floor(Math.random() * 15) + 1;
+    try {
+      const [nowPlaying, popular, topRated] = await Promise.all([
+        MovieListApi.getNowPlaying(page),
+        MovieListApi.getPopular(),
+        MovieListApi.getTopRated(),
+      ]);
+      setNowPlaying(nowPlaying.data.results)
+      setPopular(popular.data.results)
+      setTopRated(topRated.data.results)
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingMovies(false);
+    }
+  };
+
+  const fetchGenres = async () => {
+    try {
+      const {data} = await GenresApi.getMovieList()
+      setGenres(data.genres)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <MoviesContext.Provider
       value={{
-        upcoming,
-        loadingSidebar,
+        fetchUpcoming,
+        upComing,
+        loadingSideBar,
         nowPlaying,
-        fetchNowPlaying,
         loadingMovies,
         fetchDetails,
         detailsMovie,
         loadingMovie,
-        fetchPopular,
         popular,
         topRated,
-        fetchTopRated,
         fetchFavoriteMovies,
-        favorites
+        favorites,
+        fetchMoviesPage,
+        genres
       }}
     >
       {children}

@@ -1,13 +1,15 @@
 import { useState, useEffect, createContext } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import AuthenticationApi from "../api/services/Authentication";
 import AccountApi from "../api/services/Account";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
+  // Router
   const navigate = useNavigate();
   const location = useLocation();
+  const [param] = useSearchParams();
 
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState({});
@@ -33,12 +35,11 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const requestToken = searchParams.get("request_token");
-    const approved = searchParams.get("approved");
-    const denied = searchParams.get("denied");
+    const requestToken = param.get("request_token") ?? "";
+    const approved = param.get("approved") === "true";
+    const denied = param.get("denied") === "true";
 
-    if (denied === "true") {
+    if (denied) {
       setAlert({
         error: true,
         msg: "Access request was denied",
@@ -48,7 +49,7 @@ const AuthProvider = ({ children }) => {
       return;
     }
 
-    if (approved === "true") {
+    if (approved) {
       setIsLoading(true);
       setAlert({});
       fetchCreateSession(requestToken);
@@ -57,79 +58,89 @@ const AuthProvider = ({ children }) => {
 
   const fetchCreateRequestToken = async () => {
     setIsLoading(true);
-    const response = await AuthenticationApi.getCreateRequestToken();
-    let requestToken = response.request_token;
 
-    if (!response.success) {
+    try {
+      const { data } = await AuthenticationApi.getCreateRequestToken();
+
+      let requestToken = data.request_token;
+      const currentURL = window.location.href;
+
+      const redirecUrl = `https://www.themoviedb.org/authenticate/${requestToken}?redirect_to=${currentURL}`;
+
+      window.location.href = redirecUrl;
+    } catch (error) {
       setAlert({
         error: true,
-        msg: response.msg,
+        msg: error.response.data.status_message,
       });
-      setIsLoading(false);
       navigate("/");
-      return;
     }
-
-    const currentURL = window.location.href;
-    const redirecUrl = `https://www.themoviedb.org/authenticate/${requestToken}?redirect_to=${currentURL}`;
-
-    window.location.href = redirecUrl;
   };
 
   const fetchCreateSession = async (requestToken) => {
     setIsLoading(true);
-    const response = await AuthenticationApi.postCreateSession(requestToken);
-    if (!response.success) {
+    try {
+      const { data } = await AuthenticationApi.postCreateSession(requestToken);
+
+      fetchDetails(data.session_id);
+    } catch (error) {
       setAlert({
         error: true,
-        msg: response.msg,
+        msg: error.response.data.status_message,
       });
-      setIsLoading(false);
       navigate("/");
-      return;
     }
-    fetchDetails(response.session_id);
   };
 
   const fetchCreateGuestSession = async () => {
     setIsLoading(true);
-    const response = await AuthenticationApi.getCreateGuestSession();
-    if (!response.success) {
+    try {
+      const {data} = await AuthenticationApi.getCreateGuestSession();
+      setGuestSessionId(data.guest_session_id);
+      setIsLoggedIn(true);
+      navigate("/movies");
+    } catch (error) {
       setAlert({
         error: true,
-        msg: response.msg,
+        msg: error.response.data.status_message,
       });
-      setIsLoading(false);
       navigate("/");
-      return;
+    } finally {
+      setIsLoading(false);
     }
-    setGuestSessionId(response.guest_session_id);
-    setIsLoggedIn(true);
-    navigate("/movies");
-    setIsLoading(false);
   };
 
   // If getDetail returns an error it is because the session requestToken has expired.
   const fetchDetails = async (session_id) => {
-    const response = await AccountApi.getDetails(session_id);
+    try {
+      const { data } = await AccountApi.getDetails(session_id);
 
-    if (!response?.success) {
+      setSessionId(session_id);
+      localStorage.setItem("session_id", session_id);
+      setDetails(data);
+      setIsLoggedIn(true);
+      navigate("/movies");
+    } catch (error) {
       setIsLoading(false);
       clearStates();
       navigate("/");
+    } finally {
+      setIsLoading(false)
     }
-    setSessionId(session_id);
-    localStorage.setItem("session_id", session_id);
-    setDetails(response);
-    setIsLoggedIn(true);
-    navigate("/movies");
+
   };
 
   const fetchDeleteSession = async () => {
-    await AuthenticationApi.deleteSession(sessionId);
-
-    clearStates();
-    navigate("/");
+    try {
+      await AuthenticationApi.deleteSession(sessionId);
+      clearStates();
+      navigate("/");
+    } catch (error) {
+      setAlert({
+        error: true,
+        msg: error.response.data.status_message,
+      });
+    }
   };
 
   const clearStates = () => {
@@ -151,7 +162,7 @@ const AuthProvider = ({ children }) => {
         fetchCreateGuestSession,
         details,
         sessionId,
-        alert
+        alert,
       }}
     >
       {children}

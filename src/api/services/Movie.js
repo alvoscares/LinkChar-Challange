@@ -1,12 +1,10 @@
 import TmdbClient from "../TmdbClient";
 
 const getDetails = async (id) => {
-    try {
-        const { data } = await TmdbClient(`/movie/${id}?append_to_response=videos,images`)
-        return data
-    } catch (error) {
-        return error
+    const params = {
+        "append_to_response":"videos,images"
     }
+    return await TmdbClient(`/movie/${id}`, {params})
 }
 
 export default { getDetails }

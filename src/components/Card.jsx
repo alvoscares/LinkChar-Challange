@@ -4,14 +4,15 @@ import { IconStarFilled } from "@tabler/icons-react";
 
 import { useImageUrl } from "../utils/hooks/useImgUrl";
 import noImag from "../assets/images/placeholder.svg";
+import useMovies from "../utils/hooks/useMovies";
 
 export const Card = ({
-  loading = false,
   movie = {},
   height = "36",
   width = "full",
   type = "",
 }) => {
+  const { loadingMovies } = useMovies();
   const { backdrop_path, id, overview, title, vote_average } = movie;
   const imgUrl = useImageUrl(backdrop_path);
 
@@ -25,12 +26,12 @@ export const Card = ({
     <Link to={`/movie/${id}`}>
       <div
         className={`${
-          loading
-            ? "bg-secondary animate-pulse  rounded-3xl h-36 w-full"
+          loadingMovies
+            ? "bg-secondary animate-pulse  rounded-3xl h-36 w-36"
             : "group relative items-center justify-center   rounded-3xl overflow-hidden cursor-pointer hover:shadow-xl hover:shadow-black/30 transition-shadow h-36 m-auto"
-        } ${type ==="section" ? "w-64 max-w-[16rem]" : "w-full"}`}
+        } ${type === "section" ? "w-64 max-w-[16rem]" : "w-full"}`}
       >
-        {!loading && (
+        {!loadingMovies && (
           <img
             className="h-full w-full object-cover group-hover:scale-125 transition-transform duration-300"
             src={imageError ? noImag : imgUrl}
@@ -39,7 +40,7 @@ export const Card = ({
           />
         )}
         {/* </div> */}
-        {!loading && (
+        {!loadingMovies && (
           <>
             <div
               className={`${

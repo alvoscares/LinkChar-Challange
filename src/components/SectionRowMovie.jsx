@@ -3,13 +3,10 @@ import { Link } from "react-router-dom";
 import { IconCaretLeftFilled, IconCaretRightFilled } from "@tabler/icons-react";
 
 import { Card } from "./Card";
+import useMovies from "../utils/hooks/useMovies";
 
-export const SectionRowMovie = ({
-  loading = false,
-  movies = [],
-  title,
-  path,
-}) => {
+export const SectionRowMovie = ({ movies = [], title, path }) => {
+  const { loadingMovies } = useMovies();
   const rowRef = useRef(null);
   const [isMoved, setIsMoved] = useState(false);
 
@@ -56,13 +53,11 @@ export const SectionRowMovie = ({
           ref={rowRef}
           className="flex items-center gap-x-8 overflow-x-scroll scrollbar-hide w-full"
         >
-          {loading
-            ? Array.from({ length: 4 }, (_, index) => (
+          {loadingMovies
+            ? Array.from({ length: 6 }, (_, index) => (
                 <Card
                   key={index}
-                  loading={true}
                   type={"section"}
-                  height={"36"}
                 />
               ))
             : movies?.map((movie) => (

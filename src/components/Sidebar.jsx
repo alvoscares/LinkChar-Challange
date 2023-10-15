@@ -6,12 +6,17 @@ import useAuth from "../utils/hooks/useAuth";
 import { Card } from "./Card";
 
 export const Sidebar = () => {
-  const { upcoming, loadingSidebar } = useMovies();
+  const { fetchUpcoming, upComing, loadingSideBar, genres } = useMovies();
   const { details } = useAuth();
 
   const isLogin = !!Object.keys(details).length;
 
   const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    const page = Math.floor(Math.random() * 15) + 1;
+    fetchUpcoming(page);
+  }, []);
 
   return (
     <div
@@ -51,7 +56,7 @@ export const Sidebar = () => {
         >
           <div className="absolute inset-0 w-full">
             <div className="flex flex-col gap-5 ">
-              {loadingSidebar
+              {loadingSideBar
                 ? Array.from({ length: 4 }, (_, index) => (
                     <Card
                       key={index}
@@ -60,7 +65,7 @@ export const Sidebar = () => {
                       height={"36"}
                     />
                   ))
-                : upcoming?.map((movie) => (
+                : upComing?.map((movie) => (
                     <Card key={movie.id} movie={movie} type={"normal"} />
                   ))}
             </div>

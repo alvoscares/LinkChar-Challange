@@ -1,27 +1,17 @@
 import TmdbClient from "../TmdbClient";
 
 const getDetails = async (session_id) => {
-    try {
-        const { data } = await TmdbClient(`/account/account_id?session_id=${session_id}`)
-        return data
-    } catch (error) {
-        return {
-            susses: false,
-            msg: error.response.data.status_message
-        }
+    const params = {
+        session_id
     }
+    return await TmdbClient(`/account/account_id`, { params })
 }
 
 const getFavoriteMovies = async (id, session_id) => {
-    try {
-        const { data } = await TmdbClient(`https://api.themoviedb.org/3/account/${id}/favorite/movies?session_id=${session_id}`)
-        return data.results
-    } catch (error) {
-        return {
-            susses: false,
-            msg: error.response.data.status_message
-        }
+    const params = {
+        session_id
     }
+    return await TmdbClient(`https://api.themoviedb.org/3/account/${id}/favorite/movies`, { params })
 }
 
 export default { getDetails, getFavoriteMovies }
