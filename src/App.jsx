@@ -4,6 +4,7 @@ import { LogInLayout } from "./layouts/LogInLayout";
 import { Login } from "./pages/Login";
 import { LoginWL } from "./pages/LoginWL";
 
+import TransitionComponent from "./components/animations/Transitions";
 import { MainLayout } from "./layouts/MainLayout";
 import { Movies } from "./pages/Movies";
 import { PopularMovies } from "./pages/PopularMovies";
@@ -14,38 +15,88 @@ import { Plans } from "./pages/Plans";
 
 import { AuthProvider } from "./context/AuthProvider";
 import { MoviesProvider } from "./context/MoviesProvider";
+import { TransitionProvider } from "./context/TransitionContext";
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <MoviesProvider>
-          <Routes>
-            <Route path="/" element={<LogInLayout />}>
-              <Route index element={<Login />} />
-            </Route>
+          <TransitionProvider>
+            <Routes>
+              <Route path="/" element={<LogInLayout />}>
+                <Route index element={<Login />} />
+              </Route>
 
-            <Route path="/" element={<MainLayout />}>
-              <Route index path="movies" element={<Movies />} />
-              <Route path="movies/popular" element={<PopularMovies />} />
-            </Route>
+              <Route path="/" element={<MainLayout />}>
+                <Route
+                  index
+                  path="movies"
+                  element={
+                    <TransitionComponent>
+                      <Movies />
+                    </TransitionComponent>
+                  }
+                />
+                <Route
+                  path="movies/popular"
+                  element={
+                    <TransitionComponent>
+                      <PopularMovies />
+                    </TransitionComponent>
+                  }
+                />
+              </Route>
 
-            <Route path="/" element={<MainLayout />}>
-              <Route index path="tvshows" element={<TvShows />} />
-            </Route>
+              <Route path="/" element={<MainLayout />}>
+                <Route
+                  index
+                  path="tvshows"
+                  element={
+                    <TransitionComponent>
+                      <TvShows />
+                    </TransitionComponent>
+                  }
+                />
+              </Route>
 
-            <Route path="/" element={<MainLayout />}>
-              <Route index path="animations" element={<Animations />} />
-            </Route>
+              <Route path="/" element={<MainLayout />}>
+                <Route
+                  index
+                  path="animations"
+                  element={
+                    <TransitionComponent>
+                      <Animations />
+                    </TransitionComponent>
+                  }
+                />
+              </Route>
 
-            <Route path="/" element={<MainLayout />}>
-              <Route index path="plans" element={<Plans />} />
-            </Route>
+              <Route path="/" element={<MainLayout />}>
+                <Route
+                  index
+                  path="plans"
+                  element={
+                    <TransitionComponent>
+                      <Plans />
+                    </TransitionComponent>
+                  }
+                />
+              </Route>
 
-            <Route path="/" element={<MainLayout />}>
-              <Route index path="movie/:id" element={<Movie />} />
-            </Route>
-          </Routes>
+              <Route path="/" element={<MainLayout />}>
+                <Route
+                  index
+                  path="movie/:id"
+                  element={
+                    <TransitionComponent>
+                      <Movie />
+                    </TransitionComponent>
+                  }
+                />
+              </Route>
+            </Routes>
+          </TransitionProvider>
         </MoviesProvider>
       </AuthProvider>
     </BrowserRouter>

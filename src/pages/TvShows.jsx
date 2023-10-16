@@ -1,5 +1,6 @@
 export const TvShows = () => {
+  localStorage.setItem('lastPath', '/tvshows');
   return (
-    <div>TvShows</div>
+    <div className="text-2xl text-white font-bold">TvShows</div>
   )
 }

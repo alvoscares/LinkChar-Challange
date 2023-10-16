@@ -6,7 +6,7 @@ import useMovies from "../utils/hooks/useMovies";
 export const Movie = () => {
   const { id } = useParams();
   const { fetchDetails, detailsMovie, loadingMovie } = useMovies();
-
+  console.log(detailsMovie)
   useEffect(() => {
     fetchDetails(id);
   }, [id]);

@@ -1,17 +1,17 @@
-import { useLayoutEffect, useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 
 import useAuth from "../utils/hooks/useAuth";
 import { Spinner } from "../components/Spinner";
+import { LinksLogin } from "../components/LinksLogin";
 
 export const Login = () => {
-  const { fetchCreateRequestToken, fetchCreateGuestSession, isLoading } =
-    useAuth();
+  const { isLoading } = useAuth();
 
   const app = useRef();
   const tl = useRef();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       tl.current && tl.current.progress(0).kill();
       tl.current = gsap.timeline().from(
@@ -31,7 +31,7 @@ export const Login = () => {
   return (
     <div
       ref={app}
-      className="flex flex-col md:flex-row items-center text-center md:text-left md:gap-48"
+      className="flex flex-col md:flex-row items-center text-center md:text-left md:gap-36"
     >
       <div className="logo text-white">
         <h1 className="text-6xl font-axiforma-bold text-center ">
@@ -43,24 +43,7 @@ export const Login = () => {
           <span className="text-base"> Álvaro Oscares Robles</span>
         </p>
       </div>
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <div className="text-white md:text-xl flex flex-col gap-y-4 md:gap-y-7 w-60">
-          <h2
-            className="label1 md:hover:text-2xl duration-300 cursor-pointer md:hover:underline"
-            onClick={fetchCreateRequestToken}
-          >
-            Log In
-          </h2>
-          <h2
-            className="label2 md:hover:text-2xl duration-300 cursor-pointer md:hover:underline"
-            onClick={fetchCreateGuestSession}
-          >
-            Enter as a Guest
-          </h2>
-        </div>
-      )}
+      {isLoading ? <Spinner /> : <LinksLogin />}
     </div>
   );
 };

@@ -119,7 +119,8 @@ const AuthProvider = ({ children }) => {
       localStorage.setItem("session_id", session_id);
       setDetails(data);
       setIsLoggedIn(true);
-      navigate("/movies");
+      const lastPath = localStorage.getItem("lastPath") || "/movies";
+      navigate(lastPath);
     } catch (error) {
       setIsLoading(false);
       clearStates();

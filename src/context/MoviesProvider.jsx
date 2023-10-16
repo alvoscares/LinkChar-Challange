@@ -131,6 +131,7 @@ const MoviesProvider = ({ children }) => {
         fetchFavoriteMovies,
         favorites,
         fetchMoviesPage,
+        fetchGenres,
         genres
       }}
     >

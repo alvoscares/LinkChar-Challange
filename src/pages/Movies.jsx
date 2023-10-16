@@ -6,6 +6,7 @@ import { Card } from "../components/Card";
 import { SectionRowMovie } from "../components/SectionRowMovie";
 
 export const Movies = () => {
+  localStorage.setItem('lastPath', '/movies');
   const {
     loadingMovies,
     fetchMoviesPage,

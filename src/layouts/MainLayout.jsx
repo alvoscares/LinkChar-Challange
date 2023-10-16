@@ -10,7 +10,7 @@ export const MainLayout = () => {
   return (
     <>
       {isLoggedIn ? (
-        <div className="font-sans h-screen  flex flex-col w-full ">
+        <div className="font-sans h-screen  flex flex-col w-full overflow-hidden">
           <Header />
           <div className=" md:flex items-start justify-normal h-full w-full ">
             <Sidebar />

@@ -31,6 +31,13 @@ export const Card = ({
             : "group relative items-center justify-center   rounded-3xl overflow-hidden cursor-pointer hover:shadow-xl hover:shadow-black/30 transition-shadow h-36 m-auto"
         } ${type === "section" ? "w-64 max-w-[16rem]" : "w-full"}`}
       >
+        <img
+          className="h-full w-full object-cover group-hover:scale-125 transition-transform duration-300"
+          src={imageError ? noImag : imgUrl}
+          alt={title}
+          onError={handleImageError}
+        />
+
         {!loadingMovies && (
           <img
             className="h-full w-full object-cover group-hover:scale-125 transition-transform duration-300"
@@ -39,7 +46,6 @@ export const Card = ({
             onError={handleImageError}
           />
         )}
-        {/* </div> */}
         {!loadingMovies && (
           <>
             <div

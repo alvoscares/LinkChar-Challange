@@ -4,9 +4,11 @@ import { IconCaretLeftFilled } from "@tabler/icons-react";
 import useMovies from "../utils/hooks/useMovies";
 import useAuth from "../utils/hooks/useAuth";
 import { Card } from "./Card";
+import { Genre } from "./Genre";
 
 export const Sidebar = () => {
-  const { fetchUpcoming, upComing, loadingSideBar, genres } = useMovies();
+  const { fetchUpcoming, upComing, loadingSideBar, fetchGenres, genres } =
+    useMovies();
   const { details } = useAuth();
 
   const isLogin = !!Object.keys(details).length;
@@ -16,7 +18,10 @@ export const Sidebar = () => {
   useEffect(() => {
     const page = Math.floor(Math.random() * 15) + 1;
     fetchUpcoming(page);
+    fetchGenres();
   }, []);
+
+  const firstSixGenres = genres.slice(0, 6);
 
   return (
     <div
@@ -76,12 +81,17 @@ export const Sidebar = () => {
         <div
           className={`flex-1 bg-secondary w-full px-11 pb-7 ${
             !isOpen && "origin-left scale-0"
-          }`}
+          } duration-300`}
         >
           <div className={``}>
-            <h1 className="text-white text-lg font-semibold pt-5">
+            <h1 className="text-white text-lg font-semibold pt-5 mb-6">
               Favourite genres
             </h1>
+            <div className="flex w-auto flex-wrap  gap-x-6 gap-y-4">
+              {firstSixGenres.map((genre) => (
+                <Genre key={genre.id}>{genre.name}</Genre>
+              ))}
+            </div>
           </div>
         </div>
       )}
